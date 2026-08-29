@@ -1,26 +1,383 @@
 @import "tailwindcss";
+@import "@fontsource-variable/cormorant-garamond";
+@import "@fontsource-variable/manrope";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ============================================================
+     Color Tokens — Premium Interior / Editorial Palette
+     ============================================================ */
+  --charcoal: #1a1a1a;
+  --charcoal-light: #292929;
+  --black: #0a0a0a;
+  --walnut: #6b4a2f;
+  --walnut-deep: #3d2b1f;
+  --cream: #f5f0e8;
+  --cream-muted: #dcd5c9;
+  --stone: #a8a098;
+  --stone-muted: #7d766e;
+  --white: #ffffff;
+
+  /* Semantic tokens */
+  --color-bg: var(--black);
+  --color-surface: var(--charcoal);
+  --color-surface-raised: var(--charcoal-light);
+  --color-text: var(--cream);
+  --color-text-muted: var(--cream-muted);
+  --color-text-faint: var(--stone-muted);
+  --color-line: rgba(245, 240, 232, 0.18);
+  --color-line-strong: rgba(245, 240, 232, 0.42);
+
+  /* Typography */
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-body: "Manrope Variable", "Manrope", system-ui, sans-serif;
+
+  /* Header */
+  --header-height: 96px;
+  --header-pad-x: 4vw;
+
+  /* Hero geometry */
+  --hero-min-height: 720px;
+  --hero-content-left: 4vw;
+  --hero-content-bottom: 14vh;
+  --hero-content-max-width: 650px;
+
+  /* Hero display heading */
+  --heading-1: clamp(56px, 7.2vw, 86px);
+  --heading-1-line: 0.96;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-layers (hero below header so the nav floats above content) */
+  --z-hero-bg: 0;
+  --z-hero-overlay: 1;
+  --z-hero-content: 2;
+  --z-header: 40;
+  --z-menu: 50;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Maps palette tokens to Tailwind utilities: text-cream, bg-charcoal, etc. */
+  --color-background: var(--black);
+  --color-foreground: var(--cream);
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-light: var(--charcoal-light);
+  --color-black: var(--black);
+  --color-walnut: var(--walnut);
+  --color-walnut-deep: var(--walnut-deep);
+  --color-cream: var(--cream);
+  --color-cream-muted: var(--cream-muted);
+  --color-stone: var(--stone);
+  --color-stone-muted: var(--stone-muted);
+  --color-white: var(--white);
+  --color-line: rgba(245, 240, 232, 0.18);
+  --color-line-strong: rgba(245, 240, 232, 0.42);
+  --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--heading-1);
+  line-height: var(--heading-1-line);
+}
+
+/* ------------------------------------------------------------
+   Accessibility helpers
+   ------------------------------------------------------------ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--walnut);
+  color: var(--cream);
+}
+
+/* ------------------------------------------------------------
+   Motion — entrance reveal (CSS-only, GSAP not installed)
+   ------------------------------------------------------------ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 30px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  animation: rise-in 900ms var(--ease-out) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* ------------------------------------------------------------
+   Marquee — seamless infinite scroll for client logos
+   ------------------------------------------------------------ */
+@keyframes marquee-ltr {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marquee-rtl {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.marquee-track--ltr {
+  display: flex;
+  width: max-content;
+  animation: marquee-ltr 35s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track--rtl {
+  display: flex;
+  width: max-content;
+  animation: marquee-rtl 35s linear infinite;
+  will-change: transform;
+}
+
+/* Fade edges so logos don't hard-cut at viewport boundaries */
+.marquee-fade {
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track--ltr,
+  .marquee-track--rtl {
+    animation: none;
+  }
+}
+
+@keyframes scroll-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.scroll-pulse {
+  animation: scroll-pulse 2.2s var(--ease-in-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .scroll-pulse {
+    animation: none;
+    opacity: 1;
+  }
+  .reveal * {
+    opacity: 1;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   Editorial underline links
+   ------------------------------------------------------------ */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transform: translateX(-50%);
+  transition: width 300ms var(--ease-out);
+}
+
+.link-underline:hover::after,
+.link-underline[aria-current="page"]::after {
+  width: 100%;
+}
+
+/* Fixed narrow underline (nav active state / static accents) */
+.link-underline--fixed::after {
+  width: 38px;
+}
+
+.link-underline--fixed:hover::after {
+  width: 100%;
+}
+
+.link-underline--narrow::after {
+  width: 30px;
+}
+
+.link-underline--narrow:hover::after {
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   Hero
+   ------------------------------------------------------------ */
+.hero-bg {
+  /* Decorative full-bleed background — plain CSS url() so the
+     browser downloads only the image matching the current
+     viewport (picture/media-query equivalent with no JS). */
+  background-image: url("/Ecovation Images/hero/desktop.png");
+  background-size: cover;
+  background-position: 62% center;
+}
+
+@media (max-width: 767px) {
+  .hero-bg {
+    /* Mobile composition — tuned to keep the room visible
+       while the lower-left text block stays readable. */
+    background-image: url("/Ecovation Images/hero/mobile.png");
+    background-position: 62% center;
+  }
+}
+
+.hero-overlay {
+  /* Directional darkening: heavier on the left where the
+     typography sits, letting the right side stay atmospheric. */
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.58) 32%,
+    rgba(0, 0, 0, 0.2) 58%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+}
+
+/* Vertical scroll indicator */
+.scroll-indicator {
+  writing-mode: vertical-rl;
+}
+
+/* ------------------------------------------------------------
+   Who We Are — responsive stacking on mobile
+   ------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .who-we-are-section {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+
+  .who-we-are-section > div:last-child {
+    position: relative !important;
+    min-height: 420px !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   Purpose Section — responsive stacking on mobile
+   ------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .purpose-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .purpose-grid > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(26,26,26,0.08);
+  }
+
+  .pillars-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
 }
